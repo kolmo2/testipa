@@ -1,0 +1,50 @@
+{
+  "Name": "MK NOISE RhYTM Machine",
+  "Version": "1.0.0",
+  "Factory Info": {
+    "Vendor": "MK",
+    "URL": "",
+    "E-Mail": "",
+    "Flags": {
+      "Unicode": true,
+      "Classes Discardable": false,
+      "Component Non Discardable": false,
+    },
+  },
+  "Classes": [
+    {
+      "CID": "ABCDEF019182FAEB4D6B6E6F4E72686D",
+      "Category": "Audio Module Class",
+      "Name": "MK NOISE RhYTM Machine",
+      "Vendor": "MK",
+      "Version": "1.0.0",
+      "SDKVersion": "VST 3.8.0",
+      "Sub Categories": [
+        "Instrument",
+        "Synth",
+        "Generator",
+      ],
+      "Class Flags": 2,
+      "Cardinality": 2147483647,
+      "Snapshots": [
+      ],
+    },
+    {
+      "CID": "ABCDEF011234ABCD4D6B6E6F4E72686D",
+      "Category": "Component Controller Class",
+      "Name": "MK NOISE RhYTM Machine",
+      "Vendor": "MK",
+      "Version": "1.0.0",
+      "SDKVersion": "VST 3.8.0",
+      "Sub Categories": [
+        "Instrument",
+        "Synth",
+        "Generator",
+      ],
+      "Class Flags": 2,
+      "Cardinality": 2147483647,
+      "Snapshots": [
+      ],
+    },
+  ],
+}
