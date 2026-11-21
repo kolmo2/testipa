@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MyApp",
-    "slug": "myapp",
+    "name": "MK NOISE RhYTM Machine",
+    "slug": "MK NOISE RhYTM Machine",
     "ios": {
       "bundleIdentifier": "com.mk.noiserhythmmachine"
     }
