@@ -1,0 +1,79 @@
+name: Build AUv3 Standalone + IPA
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-spm-
+
+      - name: Import signing cert & provisioning profiles
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Decode certificate
+          echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > /tmp/cert.p12
+          echo "$PROVISIONING_PROFILE_BASE64" | base64 --decode > /tmp/profile.mobileprovision
+
+          # Install profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import /tmp/cert.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+      - name: Build & Archive
+        run: bash scripts/build.sh
+        env:
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          SCHEME: ${{ vars.SCHEME }}
+          BUNDLE_ID: ${{ vars.BUNDLE_ID }}
+
+      - name: Upload Standalone .app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Standalone-App
+          path: build/standalone/*.app.zip
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: IPA
+          path: build/ipa/*.ipa
+
+      - name: Upload dSYMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: dSYMs
+          path: build/dSYMs/*.dSYM.zip
