@@ -6,10 +6,6 @@ on:
     tags: [ 'v*' ]
   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: macos-14
-    timeout-minutes: 45
 
     steps:
       - name: Checkout
