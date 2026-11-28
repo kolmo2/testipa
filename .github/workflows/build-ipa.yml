@@ -25,7 +25,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout target project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.repo }}
           ref: ${{ inputs.ref }}
